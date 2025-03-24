@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Panel for Uploading Artwork">
+    <title>Admin - Upload Artwork</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="admin.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Admin Panel - Upload Artwork</h1>
+    </header>
+    
+    <section class="login-form">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </section>
+    
+    <section class="upload-art" style="display: none;">
+        <h2>Upload New Artwork</h2>
+        <form id="uploadForm">
+            <input type="text" id="artName" placeholder="Artwork Name" required>
+            <input type="text" id="price" placeholder="Price" required>
+            <input type="text" id="size" placeholder="Size" required>
+            <input type="text" id="medium" placeholder="Medium" required>
+            <input type="file" id="artUpload" accept="image/*" required>
+            <button type="submit">Upload</button>
+        </form>
+    </section>
+
+    <script>
+        const API_KEY = "AIzaSyB3JpmSTI-c6wA6h91W8DRmAVxekZBdZV0";
+        const CLIENT_ID = "368831812026-65stgl5cofnttak81eb4suadql3emfg6.apps.googleusercontent.com";
+        const FOLDER_ID = "1_JCnLKIP3Z_-PAxzNsAHmconzUYSb6-Q"; // Replace with actual folder ID
+
+        function authenticate() {
+            return gapi.auth2.getAuthInstance()
+                .signIn({ scope: "https://www.googleapis.com/auth/drive.file" })
+                .then(() => console.log("Sign-in successful"))
+                .catch(err => console.error("Error signing in", err));
+        }
+
+        function loadClient() {
+            gapi.client.setApiKey(API_KEY);
+            return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v3/rest")
+                .then(() => console.log("GAPI client loaded for API"))
+                .catch(err => console.error("Error loading GAPI client", err));
+        }
+
+        function uploadFile(file, metadata) {
+            const form = new FormData();
+            form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
+            form.append("file", file);
+
+            fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&key=${API_KEY}`, {
+                method: "POST",
+                headers: new Headers({ "Authorization": `Bearer ${gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token}` }),
+                body: form
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Upload successful! File ID: " + data.id);
+            })
+            .catch(error => console.error("Error uploading file:", error));
+        }
+
+        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const file = document.getElementById("artUpload").files[0];
+            if (!file) {
+                alert("Please select a file!");
+                return;
+            }
+            const metadata = {
+                name: file.name,
+                parents: [FOLDER_ID],
+                mimeType: file.type
+            };
+            uploadFile(file, metadata);
+        });
+
+        gapi.load("client:auth2", () => {
+            gapi.auth2.init({ client_id: CLIENT_ID });
+        });
+    </script>
+</body>
+</html>

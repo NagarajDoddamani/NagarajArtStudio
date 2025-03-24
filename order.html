@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Order a Custom Pencil Sketch">
+    <title>Order Pencil Sketch</title>
+    <link rel="stylesheet" href="styles.css">
+    <!--<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script defer src="order.js"></script>-->
+</head>
+<body>
+    <header>
+        <h1>Order a Custom Pencil Sketch</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="order-form">
+        <h2>Place Your Order</h2>
+        <form action="https://formsubmit.co/nagarajcreations2005@email.com" method="POST">
+            <input type="text" name="name" id="name" placeholder="Your Name" required>
+            <input type="email" name="email" id="email" placeholder="Your Email" required>
+            <input type="text" name="size" id="size" placeholder="Preferred Size (e.g., A4, A3)" required>
+            <textarea name="details" id="details" placeholder="Additional Details" required></textarea>
+            <input type="file" name="photo" id="photo" accept="image/*" required>
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            <button type="submit">Submit Order</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Nagaraj Creations. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
